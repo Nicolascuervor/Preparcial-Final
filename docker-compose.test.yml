@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  db-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_db
+    tmpfs:
+      - /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@db-test:5432/test_db
+    depends_on:
+      - db-test
